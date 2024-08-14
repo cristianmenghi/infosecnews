@@ -1,3 +1,4 @@
+# Categoria 1
 https://www.404media.co/rss
 https://aboutdfir.com/feed
 https://blog.cryptographyengineering.com/feed
@@ -28,6 +29,8 @@ https://feeds.bloomberg.com/technology/news.rss
 https://www.c4isrnet.com/arc/outboundfeeds/rss/category/cyber/?outputType=xml
 https://www.cisecurity.org/feed/advisories
 https://cert.be/en/rss
+
+# Categoria 2
 https://www.kb.cert.org/vulfeed/
 https://blog.chainalysis.com/feed/
 https://research.checkpoint.com/feed
@@ -76,6 +79,8 @@ https://www.eff.org/rss/updates.xml
 https://jacknaglieri.substack.com/feed
 https://dev.to/feed
 https://blog.rootshell.be/feed
+# Categoria 3
+
 https://www.digitaljournal.com/feed
 https://www.digitalshadows.com/blog-and-research/feed/
 https://ddosecrets.substack.com/feed
@@ -114,6 +119,8 @@ https://feeds.feedburner.com/HealthTechMagazine
 https://heimdalsecurity.com/blog/feed
 https://www.helpnetsecurity.com/feed
 https://iacr.org/news/rss
+
+# Catgoria 5
 https://spectrum.ieee.org/feeds/topic/artificial-intelligence.rss
 https://industrialcyber.co/feed/
 https://danielmiessler.com/category/information-security/feed
@@ -150,6 +157,8 @@ https://www.reddit.com/r/Malware
 https://blog.malwarebytes.com/feed/
 https://malwaresloth.com/rss.xml
 https://malwaretech.com/feed.xml
+
+# Categoria 6
 https://www.microsoft.com/security/blog/feed
 https://cloudblogs.microsoft.com/microsoftsecure/feed/
 https://msrc-blog.microsoft.com/feed
