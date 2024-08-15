@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     const feedsContainer = document.getElementById('feeds');
-    let currentCategory = '';
+    let currentCategoryDiv = null;
 
     // Función para cargar el archivo feeds.txt
     fetch('feeds.txt')
@@ -11,13 +11,29 @@ document.addEventListener('DOMContentLoaded', function () {
             lines.forEach(line => {
                 if (line.startsWith('#')) {
                     // Es una categoría
-                    currentCategory = line.substring(1).trim();
-                    const categoryTitle = document.createElement('h2');
-                    categoryTitle.className = 'col-12 mt-4';
-                    categoryTitle.textContent = currentCategory;
-                    feedsContainer.appendChild(categoryTitle);
-                } else {
-                    // Es un URL de feed
+                    const categoryTitle = line.substring(1).trim();
+
+                    // Crear un nuevo div para la categoría
+                    const categorySection = document.createElement('div');
+                    categorySection.className = 'category-section';
+
+                    // Crear el título de la categoría
+                    const categoryTitleElement = document.createElement('h2');
+                    categoryTitleElement.className = 'col-12 mt-4';
+                    categoryTitleElement.textContent = categoryTitle;
+
+                    // Crear un contenedor de filas para los feeds dentro de la categoría
+                    currentCategoryDiv = document.createElement('div');
+                    currentCategoryDiv.className = 'row';
+
+                    // Añadir el título y el contenedor de la categoría al categorySection
+                    categorySection.appendChild(categoryTitleElement);
+                    categorySection.appendChild(currentCategoryDiv);
+
+                    // Añadir la categoría completa al feedsContainer
+                    feedsContainer.appendChild(categorySection);
+                } else if (currentCategoryDiv) {
+                    // Es un URL de feed, añadirlo al contenedor actual de la categoría
                     fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(line.trim())}`)
                         .then(response => response.json())
                         .then(data => {
@@ -39,7 +55,7 @@ document.addEventListener('DOMContentLoaded', function () {
                                 feedDiv.appendChild(itemDiv);
                             });
 
-                            feedsContainer.appendChild(feedDiv);
+                            currentCategoryDiv.appendChild(feedDiv);
                         })
                         .catch(error => console.error('Error fetching the RSS feed:', error));
                 }
