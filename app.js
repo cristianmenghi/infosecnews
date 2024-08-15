@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const feedsContainer = document.getElementById('feeds');
+    const CACHE_EXPIRATION_MS = 24 * 60 * 60 * 1000; // 24 horas en milisegundos
     let currentCategoryDiv = null;
 
-    // Función para cargar el archivo feeds.txt
     fetch('feeds.txt')
         .then(response => response.text())
         .then(text => {
@@ -10,30 +10,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
             lines.forEach(line => {
                 if (line.startsWith('#')) {
-                    // Es una categoría
                     const categoryTitle = line.substring(1).trim();
 
-                    // Crear un nuevo div para la categoría
                     const categorySection = document.createElement('div');
                     categorySection.className = 'category-section mb-5';
 
-                    // Crear el título de la categoría
                     const categoryTitleElement = document.createElement('h2');
                     categoryTitleElement.className = 'col-12 mt-4';
                     categoryTitleElement.textContent = categoryTitle;
 
-                    // Crear un contenedor de filas para los feeds dentro de la categoría
                     currentCategoryDiv = document.createElement('div');
                     currentCategoryDiv.className = 'row';
 
-                    // Añadir el título y el contenedor de la categoría al categorySection
                     categorySection.appendChild(categoryTitleElement);
                     categorySection.appendChild(currentCategoryDiv);
 
-                    // Añadir la categoría completa al feedsContainer
                     feedsContainer.appendChild(categorySection);
                 } else if (line.trim()) {
-                    // Es una URL de feed, procesarla
                     addFeedToCategory(currentCategoryDiv, line.trim());
                 }
             });
@@ -41,30 +34,41 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => console.error('Error loading the feeds.txt file:', error));
 
     function addFeedToCategory(categoryDiv, feedUrl) {
-        // Solicitar y procesar cada feed URL
-        fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`)
-            .then(response => response.json())
-            .then(data => {
-                const feedDiv = document.createElement('div');
-                feedDiv.className = 'col-md-3 feed mb-4';
+        const cacheKey = `rss_cache_${feedUrl}`;
+        const cachedData = JSON.parse(localStorage.getItem(cacheKey));
 
-                const feedTitle = document.createElement('h5');
-                feedTitle.textContent = data.feed.title;
-                feedDiv.appendChild(feedTitle);
+        if (cachedData && (Date.now() - cachedData.timestamp < CACHE_EXPIRATION_MS)) {
+            displayFeed(categoryDiv, cachedData.data);
+        } else {
+            fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feedUrl)}`)
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem(cacheKey, JSON.stringify({ data, timestamp: Date.now() }));
+                    displayFeed(categoryDiv, data);
+                })
+                .catch(error => console.error('Error fetching the RSS feed:', error));
+        }
+    }
 
-                data.items.forEach(item => {
-                    const itemDiv = document.createElement('div');
-                    const itemTitle = document.createElement('a');
-                    itemTitle.href = item.link;
-                    itemTitle.textContent = item.title;
-                    itemTitle.target = '_blank';
+    function displayFeed(categoryDiv, data) {
+        const feedDiv = document.createElement('div');
+        feedDiv.className = 'col-md-3 feed mb-4';
 
-                    itemDiv.appendChild(itemTitle);
-                    feedDiv.appendChild(itemDiv);
-                });
+        const feedTitle = document.createElement('h5');
+        feedTitle.textContent = data.feed.title;
+        feedDiv.appendChild(feedTitle);
 
-                categoryDiv.appendChild(feedDiv);
-            })
-            .catch(error => console.error('Error fetching the RSS feed:', error));
+        data.items.forEach(item => {
+            const itemDiv = document.createElement('div');
+            const itemTitle = document.createElement('a');
+            itemTitle.href = item.link;
+            itemTitle.textContent = item.title;
+            itemTitle.target = '_blank';
+
+            itemDiv.appendChild(itemTitle);
+            feedDiv.appendChild(itemDiv);
+        });
+
+        categoryDiv.appendChild(feedDiv);
     }
 });
