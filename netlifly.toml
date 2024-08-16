@@ -1,0 +1,12 @@
+[build]
+  functions = "functions"
+  publish = "public"
+
+[dev]
+  functionsPort = 8888
+  command = "npm start"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
