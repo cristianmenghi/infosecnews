@@ -1,0 +1,11 @@
+{
+    "name": "rss-aggregator",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT",
+    "dependencies": {
+      "rss-parser": "^3.9.0",
+      "@netlify/cache": "^2.0.0"
+    }
+  }
+  
