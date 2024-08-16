@@ -1,26 +1,38 @@
-const fetch = require('node-fetch');
+const Parser = require('rss-parser');
+const parser = new Parser();
+const fs = require('fs');
+const cache = require('@netlify/cache');
 
-exports.handler = async function(event, context) {
-  const feedUrl = event.queryStringParameters.url;
+exports.handler = async function() {
+  const cacheKey = 'rss-feeds';
+  const cachedFeeds = await cache.get(cacheKey);
 
-  try {
-    // Fetch the RSS data from the source
-    const response = await fetch(feedUrl);
-    const data = await response.text();
-
-    // Return the response with caching headers
+  if (cachedFeeds) {
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/xml',
-        'Cache-Control': 'public, max-age=0, s-maxage=86400, stale-while-revalidate=86400',
-      },
-      body: data
-    };
-  } catch (err) {
-    return {
-      statusCode: 500,
-      body: `Error fetching RSS feed: ${err.message}`
+      body: JSON.stringify(cachedFeeds)
     };
   }
+
+  const data = fs.readFileSync('./feed.txt', 'utf8');
+  const lines = data.split('\n');
+  let feeds = {};
+  let currentCategory = '';
+
+  for (let line of lines) {
+    line = line.trim();
+    if (line.startsWith('#')) {
+      currentCategory = line.substring(1).trim();
+      feeds[currentCategory] = [];
+    } else if (line) {
+      const feed = await parser.parseURL(line);
+      feeds[currentCategory].push(feed);
+    }
+  }
+
+  await cache.set(cacheKey, feeds, { maxAge: 24 * 60 * 60 });
+  return {
+    statusCode: 200,
+    body: JSON.stringify(feeds)
+  };
 };
