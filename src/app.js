@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const feedsContainer = document.getElementById('feeds');
   
-    fetch('feeds.txt')
+    fetch('src/feeds.txt')
       .then(response => response.text())
       .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
