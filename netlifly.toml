@@ -1,12 +1,3 @@
 [build]
-  functions = ".netlify/functions"
+  functions = "netlify/functions"
 
-
-[dev]
-  functionsPort = 8888
-  command = "npm start"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200

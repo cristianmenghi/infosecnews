@@ -14,7 +14,7 @@ exports.handler = async function() {
     };
   }
 
-  const data = fs.readFileSync('./feed.txt', 'utf8');
+  const data = fs.readFileSync('./src/feed.txt', 'utf8');
   const lines = data.split('\n');
   let feeds = {};
   let currentCategory = '';
