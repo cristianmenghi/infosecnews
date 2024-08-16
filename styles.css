@@ -35,3 +35,8 @@ h1 {
     border-radius: 5px;
     background-color: #fff;
 }
+
+a {
+    color: rgba(var(--bs-link-color-rgb), var(--bs-link-opacity, 1));
+    text-decoration: none;
+}
