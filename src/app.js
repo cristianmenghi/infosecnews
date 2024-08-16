@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
     const feedsContainer = document.getElementById('feeds');
+    let categoryDiv = null;  // Define categoryDiv in the outer scope
   
-    fetch('src/feeds.txt')
+    fetch('feeds.txt')
       .then(response => response.text())
       .then(text => {
         const lines = text.split('\n').filter(line => line.trim() !== '');
@@ -16,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function () {
             categoryTitleElement.className = 'col-12 mt-4';
             categoryTitleElement.textContent = categoryTitle;
   
-            const categoryDiv = document.createElement('div');
+            categoryDiv = document.createElement('div');  // Update categoryDiv for the new category
             categoryDiv.className = 'row';
   
             categorySection.appendChild(categoryTitleElement);
@@ -25,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
             feedsContainer.appendChild(categorySection);
           } else if (line.trim()) {
             const feedUrl = line.trim();
-            addFeedToCategory(categoryDiv, feedUrl);
+            addFeedToCategory(categoryDiv, feedUrl);  // Use categoryDiv to add feeds
           }
         });
       })
